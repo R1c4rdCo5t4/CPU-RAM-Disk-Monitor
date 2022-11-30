@@ -1,22 +1,26 @@
 import psutil
 import time
 from dataclasses import dataclass
+import os
 
 
 @dataclass
 class Usage:
     usage: float
-    percent : float = 0
-    bars: int = 20
-    bar_char: str = '█'
+    bar_width: int = 20
+    bar_symbol: str = '█'
 
-    def __post_init__(self):
-        self.percent = self.usage / 100.0
-        self.bars = self.bar_char * int(self.percent * self.bars) + ' ' * (self.bars - int(self.percent * self.bars))
+    @property
+    def percent(self) -> float:
+        return self.usage / 100
 
-    def __str__(self):
-        return f" |{self.bars}| {self.usage:5.1f}%  "
+    def __str__(self) -> str:
+        usage = self.bar_symbol * int(self.percent * self.bar_width)
+        remaining = ' ' * (self.bar_width - int(self.percent * self.bar_width))
+        bars_str =  usage + remaining
+        return f" |{bars_str}| {self.usage:5.1f}%   "
 
+   
 
 
 def main():
@@ -33,4 +37,5 @@ def main():
 
 
 if __name__ == '__main__':
+    os.system('clear' if os.name == 'posix' else 'cls') # linux/windows
     main()
